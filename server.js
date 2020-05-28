@@ -174,10 +174,17 @@ const msgArr = [];
 //     id: '28'}
 // ];
 
-// router.get('/msgArr', async (ctx, next) => {
-//   ctx.response.body = JSON.stringify(msgArr);
-//   console.log('Message sended to frontend');
-// });
+router.get('/msgArr', async (ctx, next) => {
+  const output = [];
+  for (item of msgArr) {
+    if (item.favorite === 'true') {
+      output.push(item);
+    }
+  }
+  console.log(output);
+  ctx.response.body = JSON.stringify(output);
+  console.log('Favorites sended to frontend');
+});
 
 router.get('/msgArr/:numb', async (ctx, next) => {
   let length = ctx.params.numb;
@@ -202,6 +209,14 @@ router.post('/msgArr', async (ctx, next) => {
   msgArr.push({...ctx.request.body, id: uuid.v4()});
   console.log('Message added');
   console.log(msgArr);
+  ctx.response.status = 204
+});
+
+router.patch('/favorite', async (ctx, next) => {
+  const { id, status } = ctx.request.query;
+  const messageIndex = msgArr.findIndex((item) => item.id === id)
+  msgArr[messageIndex].favorite = status;
+  console.log(msgArr[messageIndex]);
   ctx.response.status = 204
 });
 
